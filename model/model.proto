@@ -1,0 +1,15 @@
+syntax = "proto3";
+package model;
+
+message Task {
+  repeated string searchTerms = 1;
+  repeated string documents = 2;
+}
+
+message DocumentData {
+  map<string, double> termToFrequency = 1;
+}
+  
+message Result {
+  map<string, DocumentData> documentToDocumentData = 1;
+}
