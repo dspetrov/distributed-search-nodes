@@ -13,3 +13,18 @@ message DocumentData {
 message Result {
   map<string, DocumentData> documentToDocumentData = 1;
 }
+
+message Request {
+  string search_query = 1;
+}
+
+message Response {
+  repeated DocumentStats relevant_documents = 1;
+
+  message DocumentStats {
+      string document_name = 1;
+      double score = 2;
+      int64 document_size = 3;
+      string author = 4;
+  }
+}

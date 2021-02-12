@@ -28,11 +28,12 @@ func main() {
 
 	conn := connectToZookeeper()
 
-	sr := clusterManagement.NewServiceRegistry(conn, clusterManagement.WORKERS_REGISTRY_ZNODE)
+	workerServiceRegistry := clusterManagement.NewServiceRegistry(conn, clusterManagement.WORKERS_REGISTRY_ZNODE)
+	coordinatorsServiceRegistry := clusterManagement.NewServiceRegistry(conn, clusterManagement.COORDINATORS_REGISTRY_ZNODE)
 
-	ea := newOnElectionAction(sr, currentServerPort)
+	ea := newOnElectionAction(workerServiceRegistry, coordinatorsServiceRegistry, currentServerPort)
 
-	le := clusterManagement.NewLeaderElection(conn, &ea)
+	le := clusterManagement.NewLeaderElection(conn, ea)
 	le.VolunteerForLeadership()
 	le.ReelectLeader()
 

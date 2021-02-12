@@ -1,6 +1,7 @@
 package networking
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -10,23 +11,27 @@ const STATUS_ENDPOINT = "/status"
 
 type WebServer struct {
 	port              int
+	server            http.Server
 	onRequestCallback OnRequestCallback
 }
 
-func NewWebServer(port int, onRequestCallback OnRequestCallback) WebServer {
+func NewWebServer(port int, onRequestCallback OnRequestCallback) *WebServer {
 	ws := WebServer{
 		port:              port,
 		onRequestCallback: onRequestCallback,
 	}
 
-	return ws
+	return &ws
 }
 
 func (ws *WebServer) StartServer() {
-	http.HandleFunc(STATUS_ENDPOINT, ws.handleStatusCheckRequest)
-	http.HandleFunc(ws.onRequestCallback.GetEndpoint(), ws.handleTaskRequest)
+	m := http.NewServeMux()
+	m.HandleFunc(STATUS_ENDPOINT, ws.handleStatusCheckRequest)
+	m.HandleFunc(ws.onRequestCallback.GetEndpoint(), ws.handleTaskRequest)
 
-	if err := http.ListenAndServe(fmt.Sprint(":", ws.port), nil); err != nil {
+	ws.server = http.Server{Addr: fmt.Sprint(":", ws.port), Handler: m}
+
+	if err := ws.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		panic(err)
 	}
 }
@@ -64,4 +69,8 @@ func (ws *WebServer) handleStatusCheckRequest(w http.ResponseWriter, r *http.Req
 	}
 
 	fmt.Fprintf(w, "Server is alive\n")
+}
+
+func (ws *WebServer) Stop() {
+	ws.server.Shutdown(context.Background())
 }

@@ -9,13 +9,13 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 )
 
-const ENDPOINT = "/task"
+const TASK_ENDPOINT = "/task"
 
 type SearchWorker struct {
 }
 
 func (s SearchWorker) HandleRequest(requestPayload []byte) []byte {
-	task := model.Task{}
+	var task model.Task
 	if err := proto.Unmarshal(requestPayload, &task); err != nil {
 		panic(err)
 	}
@@ -39,7 +39,7 @@ func (s SearchWorker) createResult(task model.Task) model.Result {
 	for _, document := range documents {
 		words := s.parseWordsFromDocument(document)
 		documentData := createDocumentData(words, task.GetSearchTerms())
-		result.DocumentToDocumentData[document] = &documentData
+		result.DocumentToDocumentData[document] = documentData
 	}
 
 	return result
@@ -73,5 +73,5 @@ func (s SearchWorker) getLinesFromDocument(documentPath string) []string {
 }
 
 func (s SearchWorker) GetEndpoint() string {
-	return ENDPOINT
+	return TASK_ENDPOINT
 }

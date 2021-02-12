@@ -22,7 +22,7 @@ func calculateTermFrequency(words []string, term string) float64 {
 	return termFrequency
 }
 
-func createDocumentData(words []string, terms []string) model.DocumentData {
+func createDocumentData(words []string, terms []string) *model.DocumentData {
 	dd := model.DocumentData{
 		TermToFrequency: make(map[string]float64),
 	}
@@ -32,10 +32,10 @@ func createDocumentData(words []string, terms []string) model.DocumentData {
 		dd.TermToFrequency[term] = termFreq
 	}
 
-	return dd
+	return &dd
 }
 
-func getDocumentsScores(terms []string, documentResults map[string]model.DocumentData) *treemap.Map {
+func GetDocumentsScores(terms []string, documentResults map[string]*model.DocumentData) *treemap.Map {
 	scoreToDocuments := treemap.NewWith(func(a, b interface{}) int { return -1 * utils.Float64Comparator(a, b) })
 
 	termToInverseDocumentFrequency := getTermToInverseDocumentFrequencyMap(terms, documentResults)
@@ -59,7 +59,7 @@ func addDocumentScoreToTreeMap(scoreToDoc *treemap.Map, score float64, document 
 	scoreToDoc.Put(score, documentsWithCurrentScore)
 }
 
-func calculateDocumentScore(terms []string, documentData model.DocumentData, termToInverseDocumentFrequency map[string]float64) float64 {
+func calculateDocumentScore(terms []string, documentData *model.DocumentData, termToInverseDocumentFrequency map[string]float64) float64 {
 	score := 0.0
 	for _, term := range terms {
 		termFrequency := documentData.TermToFrequency[term]
@@ -70,7 +70,7 @@ func calculateDocumentScore(terms []string, documentData model.DocumentData, ter
 	return score
 }
 
-func getInverseDocumentFrequency(term string, documentResults map[string]model.DocumentData) float64 {
+func getInverseDocumentFrequency(term string, documentResults map[string]*model.DocumentData) float64 {
 	nt := 0
 	for _, documentData := range documentResults {
 		termFrequency := documentData.TermToFrequency[term]
@@ -86,7 +86,7 @@ func getInverseDocumentFrequency(term string, documentResults map[string]model.D
 	return math.Log10(float64(len(documentResults)) / float64(nt))
 }
 
-func getTermToInverseDocumentFrequencyMap(terms []string, documentResults map[string]model.DocumentData) map[string]float64 {
+func getTermToInverseDocumentFrequencyMap(terms []string, documentResults map[string]*model.DocumentData) map[string]float64 {
 	termToIDF := make(map[string]float64)
 	for _, term := range terms {
 		idf := getInverseDocumentFrequency(term, documentResults)

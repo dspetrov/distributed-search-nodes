@@ -74,7 +74,7 @@ func (se *ServiceRegistry) createServiceRegistryNode() {
 	}
 }
 
-func (se *ServiceRegistry) getAllServiceAddresses() []string {
+func (se *ServiceRegistry) GetAllServiceAddresses() []string {
 	se.getAddressesMutex.Lock()
 	defer se.getAddressesMutex.Unlock()
 

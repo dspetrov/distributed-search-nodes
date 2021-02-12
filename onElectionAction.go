@@ -10,23 +10,37 @@ import (
 )
 
 type OnElectionAction struct {
-	serviceRegistry *clusterManagement.ServiceRegistry
-	port            int
-	webServer       networking.WebServer
+	workersServiceRegistry      *clusterManagement.ServiceRegistry
+	coordinatorsServiceRegistry *clusterManagement.ServiceRegistry
+	port                        int
+	webServer                   *networking.WebServer
 }
 
-func newOnElectionAction(serviceRegistry *clusterManagement.ServiceRegistry, port int) OnElectionAction {
+func newOnElectionAction(workersServiceRegistry *clusterManagement.ServiceRegistry, coordinatorsServiceRegistry *clusterManagement.ServiceRegistry, port int) *OnElectionAction {
 	ea := OnElectionAction{
-		serviceRegistry: serviceRegistry,
-		port:            port,
+		workersServiceRegistry:      workersServiceRegistry,
+		coordinatorsServiceRegistry: coordinatorsServiceRegistry,
+		port:                        port,
 	}
 
-	return ea
+	return &ea
 }
 
 func (ea *OnElectionAction) OnElectedToBeLeader() {
-	ea.serviceRegistry.UnregisterFromCluster()
-	ea.serviceRegistry.RegisterForUpdates()
+	ea.workersServiceRegistry.UnregisterFromCluster()
+	ea.workersServiceRegistry.RegisterForUpdates()
+
+	if ea.webServer != nil {
+		ea.webServer.Stop()
+	}
+
+	searchCoordinator := search.NewSearchCoordinator(ea.workersServiceRegistry, networking.NewWebClient())
+	ea.webServer = networking.NewWebServer(ea.port, searchCoordinator)
+	ea.webServer.StartServer()
+
+	ipAddress := getLocalIpAddress()
+	currentServerAddress := fmt.Sprintf("http://%v:%v%v", ipAddress, ea.port, searchCoordinator.GetEndpoint())
+	ea.coordinatorsServiceRegistry.RegisterToCluster(currentServerAddress)
 }
 
 func (ea *OnElectionAction) OnWorker() {
@@ -36,7 +50,7 @@ func (ea *OnElectionAction) OnWorker() {
 
 	ipAddress := getLocalIpAddress()
 	currentServerAddress := fmt.Sprintf("http://%v:%v%v", ipAddress, ea.port, searchWorker.GetEndpoint())
-	ea.serviceRegistry.RegisterToCluster(currentServerAddress)
+	ea.workersServiceRegistry.RegisterToCluster(currentServerAddress)
 }
 
 func getLocalIpAddress() string {
