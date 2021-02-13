@@ -36,7 +36,7 @@ func (ea *OnElectionAction) OnElectedToBeLeader() {
 
 	searchCoordinator := search.NewSearchCoordinator(ea.workersServiceRegistry, networking.NewWebClient())
 	ea.webServer = networking.NewWebServer(ea.port, searchCoordinator)
-	ea.webServer.StartServer()
+	go ea.webServer.StartServer()
 
 	ipAddress := getLocalIpAddress()
 	currentServerAddress := fmt.Sprintf("http://%v:%v%v", ipAddress, ea.port, searchCoordinator.GetEndpoint())
@@ -44,9 +44,9 @@ func (ea *OnElectionAction) OnElectedToBeLeader() {
 }
 
 func (ea *OnElectionAction) OnWorker() {
-	searchWorker := search.SearchWorker{}
+	searchWorker := search.NewSearchWorker()
 	ea.webServer = networking.NewWebServer(ea.port, searchWorker)
-	ea.webServer.StartServer()
+	go ea.webServer.StartServer()
 
 	ipAddress := getLocalIpAddress()
 	currentServerAddress := fmt.Sprintf("http://%v:%v%v", ipAddress, ea.port, searchWorker.GetEndpoint())

@@ -12,6 +12,15 @@ import (
 const TASK_ENDPOINT = "/task"
 
 type SearchWorker struct {
+	wordsCache map[string][]string
+}
+
+func NewSearchWorker() *SearchWorker {
+	sw := SearchWorker{
+		wordsCache: make(map[string][]string),
+	}
+
+	return &sw
 }
 
 func (s SearchWorker) HandleRequest(requestPayload []byte) []byte {
@@ -32,12 +41,19 @@ func (s SearchWorker) HandleRequest(requestPayload []byte) []byte {
 
 func (s SearchWorker) createResult(task model.Task) model.Result {
 	documents := task.GetDocuments()
-	fmt.Println("Received %v documents to process", len(documents))
+	fmt.Printf("Received %v documents to process\n", len(documents))
 
-	result := model.Result{}
+	result := model.Result{
+		DocumentToDocumentData: make(map[string]*model.DocumentData),
+	}
 
 	for _, document := range documents {
-		words := s.parseWordsFromDocument(document)
+		words, areCached := s.wordsCache[document]
+		if !areCached {
+			words = s.parseWordsFromDocument(document)
+			s.wordsCache[document] = words
+		}
+
 		documentData := createDocumentData(words, task.GetSearchTerms())
 		result.DocumentToDocumentData[document] = documentData
 	}

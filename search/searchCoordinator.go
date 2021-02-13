@@ -133,7 +133,7 @@ func (sc SearchCoordinator) sendTasksToWorkers(workers []string, tasks []model.T
 
 	results := make([]model.Result, workersCount)
 	for i := 0; i < workersCount; i++ {
-		results = append(results, <-ch)
+		results[i] = <-ch
 	}
 
 	fmt.Printf("Received %v results\n", workersCount)

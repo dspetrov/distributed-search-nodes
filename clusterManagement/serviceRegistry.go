@@ -96,7 +96,7 @@ func (se *ServiceRegistry) updateAddresses() {
 
 	go se.processChildrenEvent(ch)
 
-	addresses := make([]string, len(workers))
+	addresses := []string{}
 
 	for _, worker := range workers {
 		serviceFullpath := se.serviceRegistryZnode + "/" + worker

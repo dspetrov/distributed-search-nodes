@@ -54,7 +54,7 @@ func (ws *WebServer) handleTaskRequest(w http.ResponseWriter, r *http.Request) {
 
 	responseBytes := ws.onRequestCallback.HandleRequest(requestBytes)
 
-	fmt.Fprintf(w, string(responseBytes))
+	fmt.Fprint(w, string(responseBytes))
 }
 
 func (ws *WebServer) handleStatusCheckRequest(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +68,7 @@ func (ws *WebServer) handleStatusCheckRequest(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	fmt.Fprintf(w, "Server is alive\n")
+	fmt.Fprint(w, "Server is alive\n")
 }
 
 func (ws *WebServer) Stop() {

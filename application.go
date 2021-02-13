@@ -13,7 +13,7 @@ import (
 const (
 	ZOOKEEPER_ADDRESS = "localhost:2181"
 	SESSION_TIMEOUT   = 3000
-	DEFAULT_PORT      = 8080
+	DEFAULT_PORT      = 8081
 )
 
 var conn *zk.Conn
