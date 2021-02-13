@@ -1,7 +1,7 @@
 package search
 
 import (
-	"dspetrov/distributed-search/model"
+	"dspetrov/distributed-search-nodes/model"
 	"math"
 	"regexp"
 	"strings"

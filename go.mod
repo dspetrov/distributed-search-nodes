@@ -1,4 +1,4 @@
-module dspetrov/distributed-search
+module dspetrov/distributed-search-nodes
 
 go 1.15
 

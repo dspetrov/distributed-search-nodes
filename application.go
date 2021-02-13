@@ -1,7 +1,7 @@
 package main
 
 import (
-	"dspetrov/distributed-search/clusterManagement"
+	"dspetrov/distributed-search-nodes/clusterManagement"
 	"fmt"
 	"os"
 	"strconv"

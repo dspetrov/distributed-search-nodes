@@ -2,7 +2,7 @@ package networking
 
 import (
 	"bytes"
-	"dspetrov/distributed-search/model"
+	"dspetrov/distributed-search-nodes/model"
 	"io/ioutil"
 	"net/http"
 

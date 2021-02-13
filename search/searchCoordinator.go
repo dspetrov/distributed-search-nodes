@@ -1,9 +1,9 @@
 package search
 
 import (
-	"dspetrov/distributed-search/clusterManagement"
-	"dspetrov/distributed-search/model"
-	"dspetrov/distributed-search/networking"
+	"dspetrov/distributed-search-nodes/clusterManagement"
+	"dspetrov/distributed-search-nodes/model"
+	"dspetrov/distributed-search-nodes/networking"
 	"fmt"
 	"io/ioutil"
 	"os"

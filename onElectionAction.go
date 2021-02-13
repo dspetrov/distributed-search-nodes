@@ -1,9 +1,9 @@
 package main
 
 import (
-	"dspetrov/distributed-search/clusterManagement"
-	"dspetrov/distributed-search/networking"
-	"dspetrov/distributed-search/search"
+	"dspetrov/distributed-search-nodes/clusterManagement"
+	"dspetrov/distributed-search-nodes/networking"
+	"dspetrov/distributed-search-nodes/search"
 	"fmt"
 	"net"
 	"strings"

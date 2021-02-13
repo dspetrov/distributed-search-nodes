@@ -2,7 +2,7 @@ package search
 
 import (
 	"bufio"
-	"dspetrov/distributed-search/model"
+	"dspetrov/distributed-search-nodes/model"
 	"fmt"
 	"os"
 
